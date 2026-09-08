@@ -45,7 +45,7 @@ export default async function Home() {
               </a>
             ) : null}
             <a
-              href={"mailto:" + (profile?.email ?? "")}
+              href="/contact"
               className="inline-flex items-center border border-ink px-6 py-3 text-sm font-medium text-ink transition-colors hover:border-moss hover:text-moss"
             >
               Get in touch
@@ -58,7 +58,7 @@ export default async function Home() {
         </div>
 
         {profile?.photo_url ? (
-          <div className="justify-self-center md:justify-self-end">
+          <div className="justify-self-center md:justify-self-end md:mt-64">
             <img
               src={profile.photo_url}
               alt={profile.name ?? "Profile photo"}
