@@ -1,4 +1,6 @@
 import { supabase } from "@/lib/supabaseClient";
+import ContactForm from "./ContactForm";
+import { Mail, Link as LinkIcon, MapPin } from "lucide-react";
 
 export const revalidate = 60;
 
@@ -9,31 +11,38 @@ export default async function ContactPage() {
     .limit(1)
     .single();
 
-  const links = [
+  const infoRows = [
     {
       label: "Email",
       value: profile?.email,
       href: profile?.email ? "mailto:" + profile.email : null,
+      icon: Mail,
     },
-    { label: "GitHub", value: profile?.github_url, href: profile?.github_url },
+    {
+      label: "GitHub",
+      value: profile?.github_url,
+      href: profile?.github_url,
+      icon: LinkIcon,
+    },
     {
       label: "LinkedIn",
       value: profile?.linkedin_url,
       href: profile?.linkedin_url,
+      icon: LinkIcon,
     },
     {
-      label: "Google Scholar",
-      value: profile?.scholar_url,
-      href: profile?.scholar_url,
+      label: "Location",
+      value: profile?.location_badge,
+      href: null,
+      icon: MapPin,
     },
-    { label: "ORCID", value: profile?.orcid_url, href: profile?.orcid_url },
-  ].filter((l) => l.value);
+  ].filter((r) => r.value);
 
   return (
     <main className="min-h-screen bg-paper text-ink">
-      <section className="mx-auto max-w-5xl px-6 pt-16 pb-10">
+      <section className="mx-auto max-w-5xl px-6 pt-16 pb-14">
         <h1 className="font-serif text-4xl md:text-5xl font-semibold tracking-tight">
-          Contact
+          Get in touch
         </h1>
         <p className="mt-4 max-w-xl text-base leading-relaxed text-ink/80">
           Open to Master&apos;s opportunities, research collaborations, and
@@ -42,33 +51,42 @@ export default async function ContactPage() {
       </section>
 
       <section className="border-t border-ink/10">
-        <div className="mx-auto max-w-5xl px-6 py-14">
-          {links.length === 0 ? (
-            <p className="text-muted">Contact details coming soon.</p>
-          ) : (
-            <ul className="space-y-6">
-              {links.map((link) => (
-                <li key={link.label} className="flex items-baseline gap-6">
-                  <span className="w-36 shrink-0 text-sm text-muted">
-                    {link.label}
-                  </span>
+        <div className="mx-auto max-w-5xl px-6 py-14 grid gap-14 md:grid-cols-2">
+          <div className="space-y-8">
+            {infoRows.length === 0 ? (
+              <p className="text-muted">Contact details coming soon.</p>
+            ) : (
+              infoRows.map((row) => {
+                const Icon = row.icon;
+                const content = (
+                  <div className="flex items-start gap-4">
+                    <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-ink/15 text-ink/70">
+                      <Icon size={16} />
+                    </span>
+                    <div>
+                      <p className="text-sm text-muted">{row.label}</p>
+                      <p className="font-serif text-lg">{row.value}</p>
+                    </div>
+                  </div>
+                );
+                return row.href ? (
                   <a
-                    href={link.href ?? "#"}
-                    className="font-serif text-xl text-ink hover:text-moss transition-colors"
+                    key={row.label}
+                    href={row.href}
+                    className="block hover:text-moss transition-colors"
                   >
-                    {link.value}
+                    {content}
                   </a>
-                </li>
-              ))}
-            </ul>
-          )}
+                ) : (
+                  <div key={row.label}>{content}</div>
+                );
+              })
+            )}
+          </div>
 
-          {profile?.location_badge ? (
-            <p className="mt-14 text-sm text-muted">{profile.location_badge}</p>
-          ) : null}
+          <ContactForm />
         </div>
       </section>
     </main>
   );
 }
-
