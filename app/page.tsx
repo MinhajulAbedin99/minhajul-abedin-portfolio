@@ -51,19 +51,20 @@ export default async function Home() {
               Get in touch
             </a>
           </div>
-
-          {profile?.location_badge ? (
-            <p className="mt-10 text-xs text-muted">{profile.location_badge}</p>
-          ) : null}
         </div>
 
         {profile?.photo_url ? (
-          <div className="justify-self-center md:justify-self-end md:mt-64">
+          <div className="relative justify-self-center md:justify-self-end">
             <img
               src={profile.photo_url}
               alt={profile.name ?? "Profile photo"}
-              className="w-full max-w-sm aspect-[4/5] object-cover"
+              className="w-full max-w-sm aspect-[4/5] object-cover rounded-2xl shadow-sm"
             />
+            {profile?.location_badge ? (
+              <span className="absolute bottom-4 left-4 rounded-full bg-paper/95 px-4 py-1.5 text-xs text-ink/80 shadow-sm">
+                {profile.location_badge}
+              </span>
+            ) : null}
           </div>
         ) : null}
       </section>
