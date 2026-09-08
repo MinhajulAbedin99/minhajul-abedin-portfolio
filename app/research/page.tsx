@@ -5,13 +5,22 @@ export const revalidate = 60;
 const dot = "\u00B7";
 
 export default async function ResearchPage() {
+  const { data: profile } = await supabase
+    .from("profile")
+    .select("research_interests")
+    .limit(1)
+    .single();
+
   const { data: research } = await supabase
     .from("research")
     .select("*")
     .order("display_order", { ascending: true });
 
   const featured = research?.find((r) => r.is_featured);
-  const rest = research?.filter((r) => !r.is_featured) ?? [];
+  const ongoing =
+    research?.filter((r) => !r.is_featured && r.status === "ongoing") ?? [];
+  const completed =
+    research?.filter((r) => !r.is_featured && r.status !== "ongoing") ?? [];
 
   return (
     <main className="min-h-screen bg-paper text-ink">
@@ -23,6 +32,20 @@ export default async function ResearchPage() {
           Thesis work and ongoing research in computer vision and
           bioinformatics.
         </p>
+
+        {profile?.research_interests &&
+        profile.research_interests.length > 0 ? (
+          <div className="mt-6 flex flex-wrap gap-3">
+            {profile.research_interests.map((interest: string) => (
+              <span
+                key={interest}
+                className="rounded-full border border-ink/15 px-4 py-1.5 text-sm text-ink/70"
+              >
+                {interest}
+              </span>
+            ))}
+          </div>
+        ) : null}
       </section>
 
       {!research || research.length === 0 ? (
@@ -72,12 +95,42 @@ export default async function ResearchPage() {
             </section>
           ) : null}
 
-          {rest.length > 0 ? (
+          {ongoing.length > 0 ? (
             <section className="border-t border-ink/10">
               <div className="mx-auto max-w-5xl px-6 py-14">
-                <h2 className="font-serif text-2xl mb-8">Other research</h2>
+                <h2 className="font-serif text-2xl mb-8">Ongoing research</h2>
                 <ul className="divide-y divide-ink/10">
-                  {rest.map((item) => (
+                  {ongoing.map((item) => (
+                    <li key={item.id} className="py-6">
+                      <div className="flex items-center gap-3">
+                        <span className="rounded-full bg-moss/10 px-2.5 py-0.5 text-xs text-moss">
+                          In progress
+                        </span>
+                      </div>
+                      <p className="mt-2 font-serif text-lg leading-snug">
+                        {item.title}
+                      </p>
+                      {item.short_description ? (
+                        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-ink/70">
+                          {item.short_description}
+                        </p>
+                      ) : null}
+                      {item.tools ? (
+                        <p className="mt-2 text-sm text-muted">{item.tools}</p>
+                      ) : null}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </section>
+          ) : null}
+
+          {completed.length > 0 ? (
+            <section className="border-t border-ink/10">
+              <div className="mx-auto max-w-5xl px-6 py-14">
+                <h2 className="font-serif text-2xl mb-8">Completed research</h2>
+                <ul className="divide-y divide-ink/10">
+                  {completed.map((item) => (
                     <li key={item.id} className="py-6">
                       <p className="font-serif text-lg leading-snug">
                         {item.title}
