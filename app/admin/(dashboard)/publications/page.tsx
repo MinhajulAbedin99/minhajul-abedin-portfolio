@@ -2,30 +2,30 @@ import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import DeleteButton from "./DeleteButton";
 
-export default async function AdminResearchListPage() {
+export default async function AdminPublicationsListPage() {
   const supabase = await createClient();
-  const { data: research } = await supabase
-    .from("research")
+  const { data: publications } = await supabase
+    .from("publications")
     .select("*")
     .order("display_order", { ascending: true });
 
   return (
     <div>
       <div className="flex items-center justify-between mb-8">
-        <h1 className="font-serif text-3xl">Research</h1>
+        <h1 className="font-serif text-3xl">Publications</h1>
         <Link
-          href="/admin/research/new"
+          href="/admin/publications/new"
           className="bg-ink px-5 py-2.5 text-sm font-medium text-paper hover:bg-moss-dark transition-colors"
         >
-          Add research
+          Add publication
         </Link>
       </div>
 
-      {!research || research.length === 0 ? (
-        <p className="text-muted">No research entries yet.</p>
+      {!publications || publications.length === 0 ? (
+        <p className="text-muted">No publications yet.</p>
       ) : (
         <ul className="divide-y divide-ink/10 border-t border-b border-ink/10">
-          {research.map((item) => (
+          {publications.map((item) => (
             <li
               key={item.id}
               className="py-4 flex items-center justify-between gap-4"
@@ -33,13 +33,12 @@ export default async function AdminResearchListPage() {
               <div className="min-w-0">
                 <p className="font-serif text-lg break-words">{item.title}</p>
                 <p className="text-sm text-muted">
-                  {item.status}
-                  {item.is_featured ? " \u00B7 Featured" : ""}
+                  {item.type} {"\u00B7"} {item.venue} {"\u00B7"} {item.status}
                 </p>
               </div>
               <div className="flex items-center gap-4 shrink-0">
                 <Link
-                  href={"/admin/research/" + item.id}
+                  href={"/admin/publications/" + item.id}
                   className="text-sm text-moss hover:text-moss-dark"
                 >
                   Edit
