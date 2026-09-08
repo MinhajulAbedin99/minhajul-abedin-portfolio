@@ -54,12 +54,23 @@ export default async function CVPage() {
             CV
           </h1>
           {profile?.cv_url ? (
-            <a
-              href={profile.cv_url}
-              className="inline-flex items-center bg-ink px-6 py-3 text-sm font-medium text-paper transition-colors hover:bg-moss-dark"
-            >
-              Download PDF
-            </a>
+            <div className="flex gap-3">
+              <a
+                href={profile.cv_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center border border-ink px-6 py-3 text-sm font-medium text-ink transition-colors hover:border-moss hover:text-moss"
+              >
+                View resume
+              </a>
+              <a
+                href={profile.cv_url}
+                download
+                className="inline-flex items-center bg-ink px-6 py-3 text-sm font-medium text-paper transition-colors hover:bg-moss-dark"
+              >
+                Download CV
+              </a>
+            </div>
           ) : null}
         </div>
       </section>
