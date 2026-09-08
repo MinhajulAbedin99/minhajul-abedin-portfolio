@@ -2,6 +2,8 @@ import { supabase } from "@/lib/supabaseClient";
 
 export const revalidate = 60;
 
+const dot = "\u00B7";
+
 export default async function Home() {
   const { data: profile } = await supabase
     .from("profile")
@@ -14,43 +16,55 @@ export default async function Home() {
     .order("display_order", { ascending: true })
     .limit(3);
 
-  const dot = "\u00B7";
-
   return (
     <main className="min-h-screen bg-paper text-ink">
-      <section className="mx-auto max-w-5xl px-6 pt-20 pb-16 md:pt-28 md:pb-24">
-        <p className="font-mono text-sm text-moss mb-6">
-          {profile?.tagline_code}
-        </p>
-        <h1 className="font-serif text-5xl md:text-7xl font-semibold leading-[1.05] tracking-tight">
-          {profile?.name}
-        </h1>
-        <p className="mt-5 text-lg md:text-xl text-muted max-w-xl">
-          {profile?.role_line}
-        </p>
-        <p className="mt-6 max-w-lg text-base leading-relaxed text-ink/80">
-          {profile?.short_bio}
-        </p>
+      <section className="mx-auto max-w-5xl px-6 pt-20 pb-16 md:pt-28 md:pb-24 grid gap-12 md:grid-cols-[1.3fr_1fr] items-start">
+        <div>
+          <p className="font-mono text-sm text-moss mb-6">
+            {profile?.tagline_code}
+          </p>
+          <h1 className="font-serif text-5xl md:text-6xl font-semibold leading-[1.05] tracking-tight">
+            {profile?.name}
+          </h1>
+          <p className="mt-5 text-lg md:text-xl text-muted max-w-xl">
+            {profile?.role_line}
+          </p>
+          <p className="mt-6 max-w-lg text-base leading-relaxed text-ink/80">
+            {profile?.short_bio}
+          </p>
 
-        <div className="mt-9 flex flex-wrap items-center gap-4">
-          {profile?.cv_url ? (
+          <div className="mt-9 flex flex-wrap items-center gap-4">
+            {profile?.cv_url ? (
+              <a
+                href={profile.cv_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center bg-ink px-6 py-3 text-sm font-medium text-paper transition-colors hover:bg-moss-dark"
+              >
+                View CV
+              </a>
+            ) : null}
             <a
-              href={profile.cv_url}
-              className="inline-flex items-center bg-ink px-6 py-3 text-sm font-medium text-paper transition-colors hover:bg-moss-dark"
+              href={"mailto:" + (profile?.email ?? "")}
+              className="inline-flex items-center border border-ink px-6 py-3 text-sm font-medium text-ink transition-colors hover:border-moss hover:text-moss"
             >
-              View CV
+              Get in touch
             </a>
+          </div>
+
+          {profile?.location_badge ? (
+            <p className="mt-10 text-xs text-muted">{profile.location_badge}</p>
           ) : null}
-          <a
-            href={"mailto:" + (profile?.email ?? "")}
-            className="inline-flex items-center border border-ink px-6 py-3 text-sm font-medium text-ink transition-colors hover:border-moss hover:text-moss"
-          >
-            Get in touch
-          </a>
         </div>
 
-        {profile?.location_badge ? (
-          <p className="mt-10 text-xs text-muted">{profile.location_badge}</p>
+        {profile?.photo_url ? (
+          <div className="justify-self-center md:justify-self-end">
+            <img
+              src={profile.photo_url}
+              alt={profile.name ?? "Profile photo"}
+              className="w-full max-w-sm aspect-[4/5] object-cover"
+            />
+          </div>
         ) : null}
       </section>
 
