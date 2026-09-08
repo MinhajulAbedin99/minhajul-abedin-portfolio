@@ -17,7 +17,7 @@ export default async function ResearchPage() {
     .order("display_order", { ascending: true });
 
   const featured = research?.find((r) => r.is_featured);
-  const ongoing =
+  const ongoingPreview =
     research?.filter((r) => !r.is_featured && r.status === "ongoing") ?? [];
   const completed =
     research?.filter((r) => !r.is_featured && r.status !== "ongoing") ?? [];
@@ -32,20 +32,53 @@ export default async function ResearchPage() {
           Thesis work and ongoing research in computer vision and
           bioinformatics.
         </p>
+      </section>
 
-        {profile?.research_interests &&
-        profile.research_interests.length > 0 ? (
-          <div className="mt-6 flex flex-wrap gap-3">
-            {profile.research_interests.map((interest: string) => (
-              <span
-                key={interest}
-                className="rounded-full border border-ink/15 px-4 py-1.5 text-sm text-ink/70"
-              >
-                {interest}
-              </span>
-            ))}
-          </div>
-        ) : null}
+      <section className="border-t border-ink/10">
+        <div className="mx-auto max-w-5xl px-6 py-10">
+          <h2 className="font-serif text-2xl mb-6">Research interests</h2>
+          {profile?.research_interests &&
+          profile.research_interests.length > 0 ? (
+            <div className="flex flex-wrap gap-3">
+              {profile.research_interests.map((interest: string) => (
+                <span
+                  key={interest}
+                  className="rounded-full border border-ink/15 px-4 py-1.5 text-sm text-ink/70"
+                >
+                  {interest}
+                </span>
+              ))}
+            </div>
+          ) : (
+            <p className="text-muted">No research interests added yet.</p>
+          )}
+        </div>
+      </section>
+
+      <section className="border-t border-ink/10">
+        <div className="mx-auto max-w-5xl px-6 py-10">
+          <h2 className="font-serif text-2xl mb-6">Ongoing research</h2>
+          {ongoingPreview.length > 0 ? (
+            <ul className="divide-y divide-ink/10">
+              {ongoingPreview.map((item) => (
+                <li key={item.id} className="py-5">
+                  <p className="font-serif text-lg leading-snug">
+                    {item.title}
+                  </p>
+                  {item.short_description ? (
+                    <p className="mt-2 max-w-2xl text-sm leading-relaxed text-ink/70">
+                      {item.short_description}
+                    </p>
+                  ) : null}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-muted">
+              Nothing in progress right now — check back soon.
+            </p>
+          )}
+        </div>
       </section>
 
       {!research || research.length === 0 ? (
@@ -91,36 +124,6 @@ export default async function ResearchPage() {
                     </a>
                   ) : null}
                 </div>
-              </div>
-            </section>
-          ) : null}
-
-          {ongoing.length > 0 ? (
-            <section className="border-t border-ink/10">
-              <div className="mx-auto max-w-5xl px-6 py-14">
-                <h2 className="font-serif text-2xl mb-8">Ongoing research</h2>
-                <ul className="divide-y divide-ink/10">
-                  {ongoing.map((item) => (
-                    <li key={item.id} className="py-6">
-                      <div className="flex items-center gap-3">
-                        <span className="rounded-full bg-moss/10 px-2.5 py-0.5 text-xs text-moss">
-                          In progress
-                        </span>
-                      </div>
-                      <p className="mt-2 font-serif text-lg leading-snug">
-                        {item.title}
-                      </p>
-                      {item.short_description ? (
-                        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-ink/70">
-                          {item.short_description}
-                        </p>
-                      ) : null}
-                      {item.tools ? (
-                        <p className="mt-2 text-sm text-muted">{item.tools}</p>
-                      ) : null}
-                    </li>
-                  ))}
-                </ul>
               </div>
             </section>
           ) : null}
