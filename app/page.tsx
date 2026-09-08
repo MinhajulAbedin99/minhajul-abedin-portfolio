@@ -41,7 +41,7 @@ export default async function Home() {
                 rel="noopener noreferrer"
                 className="inline-flex items-center bg-ink px-6 py-3 text-sm font-medium text-paper transition-colors hover:bg-moss-dark"
               >
-                View CV
+                View My Resume
               </a>
             ) : null}
             <a
