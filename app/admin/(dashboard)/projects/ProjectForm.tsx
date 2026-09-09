@@ -25,6 +25,9 @@ export default function ProjectForm({ project }: { project: Project }) {
     live_url: project?.live_url ?? "",
     display_order: project?.display_order ?? 0,
   });
+  const [tags, setTags] = useState(
+    ((project as unknown as { tags?: string[] })?.tags ?? []).join(", "),
+  );
   const [imageUrls, setImageUrls] = useState<string[]>(
     project?.image_urls ?? [],
   );
@@ -63,7 +66,11 @@ export default function ProjectForm({ project }: { project: Project }) {
     setStatus("saving");
 
     const supabase = createClient();
-    const payload = { ...form, image_urls: imageUrls };
+    const tagList = tags
+      .split(",")
+      .map((t) => t.trim())
+      .filter(Boolean);
+    const payload = { ...form, image_urls: imageUrls, tags: tagList };
 
     const { error } = project?.id
       ? await supabase.from("projects").update(payload).eq("id", project.id)
@@ -128,6 +135,19 @@ export default function ProjectForm({ project }: { project: Project }) {
           type="text"
           value={form.live_url}
           onChange={(e) => update("live_url", e.target.value)}
+          className="w-full border border-ink/20 bg-transparent px-4 py-3 text-sm focus:outline-none focus:border-moss"
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm text-muted mb-2">
+          Tags (comma separated)
+        </label>
+        <input
+          type="text"
+          value={tags}
+          onChange={(e) => setTags(e.target.value)}
+          placeholder="Machine Learning, Deep Learning, Python"
           className="w-full border border-ink/20 bg-transparent px-4 py-3 text-sm focus:outline-none focus:border-moss"
         />
       </div>
