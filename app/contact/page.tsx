@@ -1,42 +1,18 @@
 import { supabase } from "@/lib/supabaseClient";
 import ContactForm from "./ContactForm";
-import { Mail, Link as LinkIcon, MapPin } from "lucide-react";
+import MoreWaysToConnect from "./MoreWaysToConnect";
+import { Link as LinkIcon } from "lucide-react";
 
 export const revalidate = 60;
 
 export default async function ContactPage() {
-  const { data: profile } = await supabase
-    .from("profile")
+  const { data: allLinks } = await supabase
+    .from("social_links")
     .select("*")
-    .limit(1)
-    .single();
+    .order("display_order", { ascending: true });
 
-  const infoRows = [
-    {
-      label: "Email",
-      value: profile?.email,
-      href: profile?.email ? "mailto:" + profile.email : null,
-      icon: Mail,
-    },
-    {
-      label: "GitHub",
-      value: profile?.github_url,
-      href: profile?.github_url,
-      icon: LinkIcon,
-    },
-    {
-      label: "LinkedIn",
-      value: profile?.linkedin_url,
-      href: profile?.linkedin_url,
-      icon: LinkIcon,
-    },
-    {
-      label: "Location",
-      value: profile?.location_badge,
-      href: null,
-      icon: MapPin,
-    },
-  ].filter((r) => r.value);
+  const featured = (allLinks ?? []).filter((l) => l.is_featured).slice(0, 4);
+  const rest = (allLinks ?? []).filter((l) => !l.is_featured);
 
   return (
     <main className="min-h-screen bg-paper text-ink">
@@ -53,38 +29,59 @@ export default async function ContactPage() {
       <section className="border-t border-ink/10">
         <div className="mx-auto max-w-5xl px-6 py-14 grid gap-14 md:grid-cols-2">
           <div className="space-y-8">
-            {infoRows.length === 0 ? (
-              <p className="text-muted">Contact details coming soon.</p>
-            ) : (
-              infoRows.map((row) => {
-                const Icon = row.icon;
-                const content = (
-                  <div className="flex items-start gap-4">
-                    <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-ink/15 text-ink/70">
-                      <Icon size={16} />
+            {featured.length > 0 ? (
+              <div className="flex flex-col gap-3">
+                {featured.map((link) =>
+                  link.url ? (
+                    <a
+                      key={link.id}
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-3 border border-ink/15 px-5 py-3 hover:border-moss transition-colors"
+                    >
+                      {link.icon_url ? (
+                        <img
+                          src={link.icon_url}
+                          alt=""
+                          className="h-6 w-6 object-cover rounded"
+                        />
+                      ) : (
+                        <LinkIcon size={16} />
+                      )}
+                      <span className="font-serif text-base">
+                        {link.display_text || link.label}
+                      </span>
+                    </a>
+                  ) : (
+                    <span
+                      key={link.id}
+                      className="flex items-center gap-3 border border-ink/15 px-5 py-3"
+                    >
+                      {link.icon_url ? (
+                        <img
+                          src={link.icon_url}
+                          alt=""
+                          className="h-6 w-6 object-cover rounded"
+                        />
+                      ) : (
+                        <LinkIcon size={16} />
+                      )}
+                      <span className="font-serif text-base">
+                        {link.display_text || link.label}
+                      </span>
                     </span>
-                    <div>
-                      <p className="text-sm text-muted">{row.label}</p>
-                      <p className="font-serif text-lg">{row.value}</p>
-                    </div>
-                  </div>
-                );
-                return row.href ? (
-                  <a
-                    key={row.label}
-                    href={row.href}
-                    className="block hover:text-moss transition-colors"
-                  >
-                    {content}
-                  </a>
-                ) : (
-                  <div key={row.label}>{content}</div>
-                );
-              })
-            )}
+                  ),
+                )}
+              </div>
+            ) : null}
+
+            <MoreWaysToConnect links={rest} />
           </div>
 
-          <ContactForm />
+          <div className="md:pt-3">
+            <ContactForm />
+          </div>
         </div>
       </section>
     </main>

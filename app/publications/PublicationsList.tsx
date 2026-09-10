@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 
 type Publication = {
   id: number;
@@ -11,7 +12,7 @@ type Publication = {
   status: string | null;
   description: string | null;
   url: string | null;
-  is_first_author: boolean | null;
+  cover_image_url: string | null;
 };
 
 const dot = "\u00B7";
@@ -59,11 +60,26 @@ export default function PublicationsList({
           <ul className="divide-y divide-ink/10">
             {visible.map((pub) => (
               <li key={pub.id} className="py-6">
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <p className="font-serif text-xl leading-snug">
-                      {pub.title}
-                    </p>
+                <Link
+                  href={"/publications/" + pub.id}
+                  className="flex items-start gap-6 group"
+                >
+                  {pub.cover_image_url ? (
+                    <img
+                      src={pub.cover_image_url}
+                      alt={pub.title}
+                      className="w-28 aspect-video object-cover shrink-0"
+                    />
+                  ) : null}
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-start justify-between gap-4">
+                      <p className="font-serif text-xl leading-snug group-hover:text-moss transition-colors">
+                        {pub.title}
+                      </p>
+                      <span className="shrink-0 rounded-full border border-ink/10 px-3 py-1 text-xs text-muted">
+                        {pub.type === "dataset" ? "Dataset" : "Paper"}
+                      </span>
+                    </div>
                     <p className="mt-2 text-sm text-muted">
                       {pub.authors}
                       {pub.venue ? " " + dot + " " + pub.venue : ""}
@@ -77,18 +93,7 @@ export default function PublicationsList({
                       </p>
                     ) : null}
                   </div>
-                  <span className="shrink-0 rounded-full border border-ink/10 px-3 py-1 text-xs text-muted">
-                    {pub.type === "dataset" ? "Dataset" : "Paper"}
-                  </span>
-                </div>
-                {pub.url ? (
-                  <a
-                    href={pub.url}
-                    className="mt-3 inline-block text-sm text-moss hover:text-moss-dark"
-                  >
-                    View link
-                  </a>
-                ) : null}
+                </Link>
               </li>
             ))}
           </ul>

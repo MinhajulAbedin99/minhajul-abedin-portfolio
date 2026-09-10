@@ -6,6 +6,7 @@ import SignOutButton from "./SignOutButton";
 const sections = [
   { href: "/admin", label: "Dashboard" },
   { href: "/admin/profile", label: "Profile" },
+  { href: "/admin/contact", label: "Contact" },
   { href: "/admin/research", label: "Research" },
   { href: "/admin/projects", label: "Projects" },
   { href: "/admin/publications", label: "Publications" },

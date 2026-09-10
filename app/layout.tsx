@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Source_Serif_4, IBM_Plex_Sans } from "next/font/google";
 import Link from "next/link";
+import ThemeToggle from "./ThemeToggle";
 import "./globals.css";
 
 const serif = Source_Serif_4({
@@ -31,28 +32,37 @@ const navLinks = [
   { href: "/contact", label: "Contact" },
 ];
 
+const themeScript =
+  "try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}";
+
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body className={serif.variable + " " + sans.variable}>
         <header className="border-b border-ink/10">
           <div className="mx-auto max-w-5xl px-6 py-5 flex items-center justify-between">
             <Link href="/" className="font-serif text-lg font-semibold">
               Minhajul Abedin
             </Link>
-            <nav className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="text-ink/70 hover:text-moss transition-colors"
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </nav>
+            <div className="flex items-center gap-6">
+              <nav className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className="text-ink/70 hover:text-moss transition-colors"
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </nav>
+              <ThemeToggle />
+            </div>
           </div>
         </header>
 

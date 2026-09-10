@@ -16,6 +16,7 @@ type Publication = {
   url: string | null;
   is_first_author: boolean | null;
   display_order: number | null;
+  cover_image_url: string | null;
 } | null;
 
 export default function PublicationForm({
@@ -37,6 +38,29 @@ export default function PublicationForm({
     display_order: publication?.display_order ?? 0,
   });
   const [status, setStatus] = useState<"idle" | "saving" | "error">("idle");
+  const [coverImageUrl, setCoverImageUrl] = useState(
+    publication?.cover_image_url ?? "",
+  );
+  const [uploadingImage, setUploadingImage] = useState(false);
+
+  async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingImage(true);
+
+    const supabase = createClient();
+    const ext = file.name.split(".").pop();
+    const path = "publications/" + Date.now() + "." + ext;
+
+    const { error } = await supabase.storage.from("media").upload(path, file);
+    if (!error) {
+      const { data } = supabase.storage.from("media").getPublicUrl(path);
+      setCoverImageUrl(data.publicUrl);
+    } else {
+      alert("Image upload failed.");
+    }
+    setUploadingImage(false);
+  }
 
   function update(field: string, value: string | boolean | number) {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -47,13 +71,14 @@ export default function PublicationForm({
     setStatus("saving");
 
     const supabase = createClient();
+    const payload = { ...form, cover_image_url: coverImageUrl };
 
     const { error } = publication?.id
       ? await supabase
           .from("publications")
-          .update(form)
+          .update(payload)
           .eq("id", publication.id)
-      : await supabase.from("publications").insert(form);
+      : await supabase.from("publications").insert(payload);
 
     if (error) {
       setStatus("error");
@@ -154,6 +179,21 @@ export default function PublicationForm({
           onChange={(e) => update("url", e.target.value)}
           className="w-full border border-ink/20 bg-transparent px-4 py-3 text-sm focus:outline-none focus:border-moss"
         />
+      </div>
+
+      <div>
+        <label className="block text-sm text-muted mb-2">Cover image</label>
+        {coverImageUrl ? (
+          <img
+            src={coverImageUrl}
+            alt=""
+            className="mb-3 h-32 w-full max-w-sm object-cover"
+          />
+        ) : null}
+        <input type="file" accept="image/*" onChange={handleImageUpload} />
+        {uploadingImage ? (
+          <p className="mt-2 text-sm text-muted">Uploading...</p>
+        ) : null}
       </div>
 
       <div className="flex items-center gap-3">

@@ -9,8 +9,18 @@
   --color-muted: #6b6f66;
 }
 
+.dark {
+  --color-paper: #15181a;
+  --color-ink: #eae7e0;
+  --color-moss: #7fb999;
+  --color-moss-dark: #a8d4ba;
+  --color-gold: #d9b455;
+  --color-muted: #9a9d93;
+}
+
 body {
   background-color: var(--color-paper);
   color: var(--color-ink);
   font-family: var(--font-sans);
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
