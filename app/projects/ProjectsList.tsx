@@ -9,24 +9,27 @@ type Project = {
   description: string | null;
   technologies: string | null;
   tags: string[] | null;
+  categories: string[] | null;
   image_urls: string[] | null;
 };
 
 export default function ProjectsList({ projects }: { projects: Project[] }) {
-  const allTags = Array.from(new Set(projects.flatMap((p) => p.tags ?? [])));
+  const allCategories = Array.from(
+    new Set(projects.flatMap((p) => p.categories ?? [])),
+  );
   const [activeTag, setActiveTag] = useState("All");
 
   const visible =
     activeTag === "All"
       ? projects
-      : projects.filter((p) => (p.tags ?? []).includes(activeTag));
+      : projects.filter((p) => (p.categories ?? []).includes(activeTag));
 
   return (
     <section className="border-t border-ink/10">
       <div className="mx-auto max-w-5xl px-6 py-10">
-        {allTags.length > 0 ? (
+        {allCategories.length > 0 ? (
           <div className="flex flex-wrap gap-3 mb-10">
-            {["All", ...allTags].map((tag) => (
+            {["All", ...allCategories].map((tag) => (
               <button
                 key={tag}
                 onClick={() => setActiveTag(tag)}

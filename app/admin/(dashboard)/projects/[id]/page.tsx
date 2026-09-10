@@ -14,10 +14,15 @@ export default async function EditProjectPage({
     .eq("id", id)
     .single();
 
+  const { data: categoryOptions } = await supabase
+    .from("project_categories")
+    .select("*")
+    .order("display_order", { ascending: true });
+
   return (
     <div>
       <h1 className="font-serif text-3xl mb-8">Edit project</h1>
-      <ProjectForm project={project} />
+      <ProjectForm project={project} categoryOptions={categoryOptions ?? []} />
     </div>
   );
 }

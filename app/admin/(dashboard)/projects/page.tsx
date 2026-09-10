@@ -13,12 +13,20 @@ export default async function AdminProjectsListPage() {
     <div>
       <div className="flex items-center justify-between mb-8">
         <h1 className="font-serif text-3xl">Projects</h1>
-        <Link
-          href="/admin/projects/new"
-          className="bg-ink px-5 py-2.5 text-sm font-medium text-paper hover:bg-moss-dark transition-colors"
-        >
-          Add project
-        </Link>
+        <div className="flex items-center gap-5">
+          <Link
+            href="/admin/projects/categories"
+            className="text-sm text-moss hover:text-moss-dark"
+          >
+            Manage categories
+          </Link>
+          <Link
+            href="/admin/projects/new"
+            className="bg-ink px-5 py-2.5 text-sm font-medium text-paper hover:bg-moss-dark transition-colors"
+          >
+            Add project
+          </Link>
+        </div>
       </div>
 
       {!projects || projects.length === 0 ? (

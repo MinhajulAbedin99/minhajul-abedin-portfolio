@@ -15,7 +15,18 @@ type Project = {
   display_order: number | null;
 } | null;
 
-export default function ProjectForm({ project }: { project: Project }) {
+type Category = {
+  id: number;
+  name: string;
+};
+
+export default function ProjectForm({
+  project,
+  categoryOptions,
+}: {
+  project: Project;
+  categoryOptions: Category[];
+}) {
   const router = useRouter();
   const [form, setForm] = useState({
     title: project?.title ?? "",
@@ -28,6 +39,15 @@ export default function ProjectForm({ project }: { project: Project }) {
   const [tags, setTags] = useState(
     ((project as unknown as { tags?: string[] })?.tags ?? []).join(", "),
   );
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(
+    (project as unknown as { categories?: string[] })?.categories ?? [],
+  );
+
+  function toggleCategory(name: string) {
+    setSelectedCategories((prev) =>
+      prev.includes(name) ? prev.filter((c) => c !== name) : [...prev, name],
+    );
+  }
   const [imageUrls, setImageUrls] = useState<string[]>(
     project?.image_urls ?? [],
   );
@@ -70,7 +90,12 @@ export default function ProjectForm({ project }: { project: Project }) {
       .split(",")
       .map((t) => t.trim())
       .filter(Boolean);
-    const payload = { ...form, image_urls: imageUrls, tags: tagList };
+    const payload = {
+      ...form,
+      image_urls: imageUrls,
+      tags: tagList,
+      categories: selectedCategories,
+    };
 
     const { error } = project?.id
       ? await supabase.from("projects").update(payload).eq("id", project.id)
@@ -150,6 +175,42 @@ export default function ProjectForm({ project }: { project: Project }) {
           placeholder="Machine Learning, Deep Learning, Python"
           className="w-full border border-ink/20 bg-transparent px-4 py-3 text-sm focus:outline-none focus:border-moss"
         />
+      </div>
+
+      <div>
+        <label className="block text-sm text-muted mb-2">Categories</label>
+        {categoryOptions.length === 0 ? (
+          <p className="text-sm text-muted">
+            No categories yet. Add some from{" "}
+            <a
+              href="/admin/projects/categories"
+              className="text-moss hover:text-moss-dark"
+            >
+              Manage categories
+            </a>
+            .
+          </p>
+        ) : (
+          <div className="flex flex-wrap gap-2">
+            {categoryOptions.map((category) => {
+              const active = selectedCategories.includes(category.name);
+              return (
+                <button
+                  type="button"
+                  key={category.id}
+                  onClick={() => toggleCategory(category.name)}
+                  className={
+                    active
+                      ? "rounded-full bg-ink px-4 py-1.5 text-sm text-paper"
+                      : "rounded-full border border-ink/15 px-4 py-1.5 text-sm text-ink/70 hover:border-moss hover:text-moss transition-colors"
+                  }
+                >
+                  {category.name}
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       <div>

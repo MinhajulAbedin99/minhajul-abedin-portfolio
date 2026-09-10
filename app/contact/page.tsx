@@ -29,6 +29,13 @@ export default async function ContactPage() {
       <section className="border-t border-ink/10">
         <div className="mx-auto max-w-5xl px-6 py-14 grid gap-14 md:grid-cols-2">
           <div className="space-y-8">
+            <span
+              className="block text-sm mb-2 invisible select-none"
+              aria-hidden="true"
+            >
+              spacer
+            </span>
+
             {featured.length > 0 ? (
               <div className="flex flex-col gap-3">
                 {featured.map((link) =>
@@ -79,7 +86,7 @@ export default async function ContactPage() {
             <MoreWaysToConnect links={rest} />
           </div>
 
-          <div className="md:pt-3">
+          <div>
             <ContactForm />
           </div>
         </div>
