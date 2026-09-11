@@ -29,12 +29,7 @@ export default async function ContactPage() {
       <section className="border-t border-ink/10">
         <div className="mx-auto max-w-5xl px-6 py-14 grid gap-14 md:grid-cols-2">
           <div className="space-y-8">
-            <span
-              className="block text-sm mb-2 invisible select-none"
-              aria-hidden="true"
-            >
-              spacer
-            </span>
+            <div aria-hidden="true" className="h-5 mb-2" />
 
             {featured.length > 0 ? (
               <div className="flex flex-col gap-3">
