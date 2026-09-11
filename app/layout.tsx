@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Source_Serif_4, IBM_Plex_Sans } from "next/font/google";
 import Link from "next/link";
-import ThemeToggle from "./ThemeToggle";
+import MobileNav from "./MobileNav";
 import { supabase } from "@/lib/supabaseClient";
 import "./globals.css";
 
@@ -65,25 +65,12 @@ export default async function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body className={serif.variable + " " + sans.variable}>
-        <header className="border-b border-ink/10">
+        <header className="border-b border-ink/10 sticky top-0 z-20 bg-paper">
           <div className="mx-auto max-w-5xl px-6 py-5 flex items-center justify-between">
             <Link href="/" className="font-serif text-lg font-semibold">
               Minhajul Abedin
             </Link>
-            <div className="flex items-center gap-6">
-              <nav className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className="text-ink/70 hover:text-moss transition-colors"
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-              </nav>
-              <ThemeToggle />
-            </div>
+            <MobileNav navLinks={navLinks} />
           </div>
         </header>
 
