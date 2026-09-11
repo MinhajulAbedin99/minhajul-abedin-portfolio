@@ -9,6 +9,7 @@ type Profile = {
   tagline_code: string | null;
   role_line: string | null;
   short_bio: string | null;
+  full_bio: string | null;
   location_badge: string | null;
   photo_url: string | null;
   cv_url: string | null;
@@ -26,6 +27,7 @@ export default function ProfileForm({ profile }: { profile: Profile }) {
     tagline_code: profile?.tagline_code ?? "",
     role_line: profile?.role_line ?? "",
     short_bio: profile?.short_bio ?? "",
+    full_bio: profile?.full_bio ?? "",
     location_badge: profile?.location_badge ?? "",
     photo_url: profile?.photo_url ?? "",
     cv_url: profile?.cv_url ?? "",
@@ -113,7 +115,12 @@ export default function ProfileForm({ profile }: { profile: Profile }) {
     { key: "name", label: "Name" },
     { key: "tagline_code", label: "Tagline (code style)" },
     { key: "role_line", label: "Role line" },
-    { key: "short_bio", label: "Short bio", textarea: true },
+    { key: "short_bio", label: "Short bio (shown in hero)", textarea: true },
+    {
+      key: "full_bio",
+      label: "Full bio (shown in About section)",
+      textarea: true,
+    },
     { key: "location_badge", label: "Location badge" },
     { key: "email", label: "Email" },
     { key: "github_url", label: "GitHub URL" },

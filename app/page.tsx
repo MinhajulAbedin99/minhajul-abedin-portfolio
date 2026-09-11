@@ -10,11 +10,30 @@ export default async function Home() {
     .select("*")
     .limit(1)
     .single();
+
   const { data: publications } = await supabase
     .from("publications")
     .select("*")
     .order("display_order", { ascending: true })
-    .limit(3);
+    .limit(2);
+
+  const { data: projects } = await supabase
+    .from("projects")
+    .select("*")
+    .order("display_order", { ascending: true })
+    .limit(2);
+
+  const { count: publicationsCount } = await supabase
+    .from("publications")
+    .select("*", { count: "exact", head: true });
+
+  const { count: projectsCount } = await supabase
+    .from("projects")
+    .select("*", { count: "exact", head: true });
+
+  const { count: researchCount } = await supabase
+    .from("research")
+    .select("*", { count: "exact", head: true });
 
   return (
     <main className="min-h-screen bg-paper text-ink">
@@ -69,6 +88,52 @@ export default async function Home() {
         ) : null}
       </section>
 
+      {profile?.full_bio ? (
+        <section className="border-t border-ink/10">
+          <div className="mx-auto max-w-5xl px-6 py-16">
+            <h2 className="font-serif text-2xl md:text-3xl mb-6">About me</h2>
+            <div className="max-w-3xl space-y-4 text-base md:text-lg leading-relaxed text-ink/80">
+              {profile.full_bio
+                .split(/\n+/)
+                .map((paragraph: string) => paragraph.trim())
+                .filter(Boolean)
+                .map((paragraph: string, i: number) => (
+                  <p key={i}>{paragraph}</p>
+                ))}
+            </div>
+
+            {profile.research_interests &&
+            profile.research_interests.length > 0 ? (
+              <div className="mt-7 flex flex-wrap gap-2">
+                {profile.research_interests.map((interest: string) => (
+                  <span
+                    key={interest}
+                    className="rounded-full border border-ink/15 px-4 py-1.5 text-sm text-ink/70"
+                  >
+                    {interest}
+                  </span>
+                ))}
+              </div>
+            ) : null}
+
+            <div className="mt-10 grid grid-cols-3 max-w-md gap-6 border-t border-ink/10 pt-8">
+              <div>
+                <p className="font-serif text-3xl">{publicationsCount ?? 0}</p>
+                <p className="mt-1 text-sm text-muted">Publications</p>
+              </div>
+              <div>
+                <p className="font-serif text-3xl">{projectsCount ?? 0}</p>
+                <p className="mt-1 text-sm text-muted">Projects</p>
+              </div>
+              <div>
+                <p className="font-serif text-3xl">{researchCount ?? 0}</p>
+                <p className="mt-1 text-sm text-muted">Research works</p>
+              </div>
+            </div>
+          </div>
+        </section>
+      ) : null}
+
       {publications && publications.length > 0 ? (
         <section className="border-t border-ink/10">
           <div className="mx-auto max-w-5xl px-6 py-16">
@@ -96,6 +161,61 @@ export default async function Home() {
                 </li>
               ))}
             </ul>
+          </div>
+        </section>
+      ) : null}
+
+      {projects && projects.length > 0 ? (
+        <section className="border-t border-ink/10">
+          <div className="mx-auto max-w-5xl px-6 py-16">
+            <div className="flex items-baseline justify-between mb-8">
+              <h2 className="font-serif text-2xl md:text-3xl">
+                Recent projects
+              </h2>
+              <a
+                href="/projects"
+                className="text-sm text-moss hover:text-moss-dark"
+              >
+                View all
+              </a>
+            </div>
+            <div className="grid gap-8 md:grid-cols-2">
+              {projects.map((project) => (
+                <a
+                  key={project.id}
+                  href={"/projects/" + project.id}
+                  className="block border border-ink/10 hover:border-moss transition-colors"
+                >
+                  {project.image_urls && project.image_urls[0] ? (
+                    <img
+                      src={project.image_urls[0]}
+                      alt={project.title}
+                      className="w-full aspect-video object-cover"
+                    />
+                  ) : null}
+                  <div className="p-5">
+                    <p className="font-serif text-xl">{project.title}</p>
+                    {project.description ? (
+                      <p className="mt-2 text-sm leading-relaxed text-ink/70 line-clamp-2">
+                        {project.description}
+                      </p>
+                    ) : null}
+                    {project.tags && project.tags.length > 0 ? (
+                      <div className="mt-4 flex flex-wrap gap-2">
+                        {project.tags.map((tag: string) => (
+                          <span
+                            key={tag}
+                            className="rounded-full border border-ink/10 px-3 py-1 text-xs text-muted"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    ) : null}
+                  </div>
+                </a>
+              ))}
+            </div>
           </div>
         </section>
       ) : null}
